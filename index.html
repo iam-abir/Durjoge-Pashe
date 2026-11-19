@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102a31">
+  <title>TRACE — Flood Response</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="TRACE home">
+        <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 18.5 11.1 11l5.1 5.1L27.5 5M19.5 5h8v8"/><path d="M4 24.5h24"/></svg></span>
+        <span class="brand-copy"><strong>TRACE</strong><small>FIELD RESPONSE</small></span>
+      </a>
+
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="primary-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-route="overview"><span class="nav-icon">◫</span><span>Overview</span></button>
+        <button class="nav-item" data-route="intake"><span class="nav-icon">＋</span><span>New intake</span><span class="nav-count">N</span></button>
+        <button class="nav-item" data-route="cases"><span class="nav-icon">▤</span><span>Case queue</span><span id="nav-case-count" class="nav-count">0</span></button>
+        <button class="nav-item" data-route="response"><span class="nav-icon">⇢</span><span>Response teams</span></button>
+        <button class="nav-item" data-route="route-map"><span class="nav-icon">⌘</span><span>Route map</span></button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <div class="incident-switcher">
+        <span class="incident-dot"></span>
+        <div><small>ACTIVE EXERCISE</small><strong>East Dhaka Flood Drill</strong></div>
+        <span class="chevron">⌄</span>
+      </div>
+      <div class="profile-row"><span class="avatar">FO</span><span><strong>Field Ops</strong><small>Demo workspace</small></span><span class="more">···</span></div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark small"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 18.5 11.1 11l5.1 5.1L27.5 5M19.5 5h8v8"/><path d="M4 24.5h24"/></svg></span><strong>TRACE</strong></div>
+        <div class="breadcrumbs"><span>Response workspace</span><span class="slash">/</span><strong id="current-crumb">Overview</strong></div>
+        <div class="top-actions"><span class="demo-chip"><i></i> PROTOTYPE</span><button class="icon-button" title="Notifications" aria-label="Notifications">♧<b></b></button><span class="top-avatar">FO</span></div>
+      </header>
+
+      <div class="prototype-banner"><span class="banner-icon">i</span><span><strong>Demo only.</strong> Uses synthetic cases and local browser storage. Do not enter real personal data or use this prototype to dispatch emergency aid.</span><button id="dismiss-banner" aria-label="Dismiss notice">×</button></div>
+
+      <section class="view active" id="view-overview">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> INCIDENT EXERCISE <span class="live-pill">SIMULATED</span></div><h1>Flood response overview</h1><p class="page-subtitle">A clear view of reported needs, pending reviews, and response progress.</p></div><button class="button button-primary" data-go="intake"><span>＋</span> Create case</button></div>
+        <div class="incident-strip"><div class="strip-icon">⌁</div><div><strong>East Dhaka Flood Drill</strong><span>Dhaka, Bangladesh <span class="bullet">•</span> Exercise workspace <span class="bullet">•</span> Updated just now</span></div><div class="strip-right"><span class="status-dot"></span> OPERATIONS EXERCISE</div></div>
+        <div id="stats-grid" class="stats-grid"></div>
+        <div class="dashboard-grid">
+          <section class="panel map-panel">
+            <div class="panel-heading"><div><div class="section-kicker">COVERAGE VIEW</div><h2>Reported needs by area</h2></div><button class="text-button" data-go="route-map">Open route map <span>↗</span></button></div>
+            <div class="schematic-map-wrap">
+              <div class="map-water water-one"></div><div class="map-water water-two"></div>
+              <div class="map-grid-lines"></div>
+              <button class="map-zone zone-khilgaon" data-zone-filter="Khilgaon"><span class="zone-label">Khilgaon</span><span class="zone-count" id="zone-count-Khilgaon">0</span></button>
+              <button class="map-zone zone-badda" data-zone-filter="Badda"><span class="zone-label">Badda</span><span class="zone-count" id="zone-count-Badda">0</span></button>
+              <button class="map-zone zone-demra" data-zone-filter="Demra"><span class="zone-label">Demra</span><span class="zone-count" id="zone-count-Demra">0</span></button>
+              <button class="map-zone zone-jatrabari" data-zone-filter="Jatrabari"><span class="zone-label">Jatrabari</span><span class="zone-count" id="zone-count-Jatrabari">0</span></button>
+              <div class="river-label">Balu River</div><div class="map-legend"><span><i class="legend-dot high"></i> Urgent</span><span><i class="legend-dot normal"></i> Other reports</span></div>
+            </div>
+            <div class="map-footnote"><span class="tiny-lock">⌖</span> Schematic exercise map · not for navigation</div>
+          </section>
+          <section class="panel priority-panel">
+            <div class="panel-heading"><div><div class="section-kicker">NEEDS ATTENTION</div><h2>Priority queue</h2></div><span class="counter-pill" id="priority-count">0</span></div>
+            <div id="priority-list" class="priority-list"></div>
+            <button class="panel-footer-link" data-go="cases">View full case queue <span>→</span></button>
+          </section>
+        </div>
+        <section class="panel needs-panel"><div class="panel-heading"><div><div class="section-kicker">FIELD SNAPSHOT</div><h2>Requested support</h2></div><span class="subtle-label">Based on open demo cases</span></div><div id="needs-bars" class="needs-bars"></div></section>
+      </section>
+
+      <section class="view" id="view-intake">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> FIELD INTAKE</div><h1>New household report</h1><p class="page-subtitle">Capture only what the response team needs. An authorized worker reviews every draft.</p></div><span class="local-save-chip"><span class="save-dot"></span> Saved on this device</span></div>
+        <div class="intake-layout">
+          <form id="intake-form" class="panel intake-form">
+            <div class="form-section-head"><span class="step-number">01</span><div><h2>Report details</h2><p>Use approximate location if an exact address could put someone at risk.</p></div></div>
+            <div class="form-grid">
+              <label class="field"><span>Response area <em>*</em></span><select id="zone" required><option value="">Select an area</option><option>Khilgaon</option><option>Badda</option><option>Demra</option><option>Jatrabari</option></select></label>
+              <label class="field"><span>Household size <em>*</em></span><select id="household-size" required><option value="">Select</option><option>1–2 people</option><option>3–5 people</option><option>6–8 people</option><option>9+ people</option></select></label>
+              <label class="field full"><span>Approximate landmark or location <em>*</em></span><input id="location" required maxlength="100" placeholder="e.g., near the community clinic, Block C"><small>Do not enter a precise home address in this demo.</small></label>
+            </div>
+            <div class="divider"></div>
+            <div class="form-section-head compact"><span class="step-number">02</span><div><h2>What support is needed?</h2><p>Select all that apply.</p></div></div>
+            <div class="need-options">
+              <label class="need-option"><input type="checkbox" name="need" value="Food"><span class="need-option-icon">◒</span><span>Food</span></label>
+              <label class="need-option"><input type="checkbox" name="need" value="Safe shelter"><span class="need-option-icon">⌂</span><span>Safe shelter</span></label>
+              <label class="need-option"><input type="checkbox" name="need" value="Medical care"><span class="need-option-icon">＋</span><span>Medical care</span></label>
+              <label class="need-option"><input type="checkbox" name="need" value="Clean water"><span class="need-option-icon">◌</span><span>Clean water</span></label>
+              <label class="need-option"><input type="checkbox" name="need" value="Evacuation"><span class="need-option-icon">↗</span><span>Evacuation</span></label>
+              <label class="need-option"><input type="checkbox" name="need" value="Other"><span class="need-option-icon">···</span><span>Other</span></label>
+            </div>
+            <label class="field"><span>Field note <em>*</em></span><textarea id="field-note" required rows="5" maxlength="800" placeholder="Summarize what the household said, in their own words where possible. Avoid adding assumptions."></textarea><div class="input-meta"><small id="char-count">0 / 800</small><small>Text entry for this prototype</small></div></label>
+            <div class="consent-box"><label><input id="consent" type="checkbox" required><span><strong>Consent confirmed</strong><small>The person understands why this information is being recorded and agrees to share it with the response team.</small></span></label></div>
+            <div class="form-actions"><button type="button" id="analyze-note" class="button button-secondary">✦ Create AI-assisted draft</button><button type="submit" id="save-case" class="button button-primary" disabled>Save for review <span>→</span></button></div>
+            <p class="form-disclaimer">Prototype simulation: this button uses simple keyword rules, not a connected AI service.</p>
+          </form>
+          <aside class="intake-aside">
+            <section class="panel assistant-panel"><div class="assistant-heading"><span class="sparkle">✦</span><div><div class="section-kicker">DRAFT ASSISTANT</div><strong>Human review required</strong></div></div><div id="draft-placeholder" class="draft-placeholder"><span class="placeholder-icon">✧</span><p>Add a field note and create a draft to see suggested needs and urgency here.</p></div><div id="draft-result" class="draft-result hidden"></div></section>
+            <section class="safety-note"><span class="safety-icon">⌑</span><div><strong>Immediate danger?</strong><p>Use your local emergency response channel now. This prototype does not send alerts or dispatch teams.</p></div></section>
+            <section class="privacy-card"><div class="privacy-icon">◈</div><strong>Keep personal details minimal</strong><p>A case ID is enough for this exercise. Do not record names, phone numbers, or sensitive details.</p></section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-cases">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> CASE MANAGEMENT</div><h1>Case queue</h1><p class="page-subtitle">Review reports, route approved cases, and record response progress.</p></div><button class="button button-primary" data-go="intake"><span>＋</span> New intake</button></div>
+        <section class="panel cases-panel"><div class="queue-toolbar"><div class="filter-tabs"><button class="filter-tab active" data-filter="all">All cases <span id="filter-count-all">0</span></button><button class="filter-tab" data-filter="pending">Needs review <span id="filter-count-pending">0</span></button><button class="filter-tab" data-filter="open">In progress <span id="filter-count-open">0</span></button><button class="filter-tab" data-filter="closed">Closed <span id="filter-count-closed">0</span></button></div><label class="search-box"><span>⌕</span><input id="case-search" type="search" placeholder="Search cases or areas"></label></div><div id="case-list" class="case-list"></div><div id="empty-cases" class="empty-state hidden"><span>▤</span><strong>No cases match this view</strong><p>Try a different filter or create a new intake.</p></div></section>
+      </section>
+
+      <section class="view" id="view-response">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> HUMAN-LED RESPONSE</div><h1>Response teams</h1><p class="page-subtitle">See where approved requests are routed and what remains open.</p></div><span class="exercise-tag">EXERCISE DATA</span></div>
+        <div id="team-grid" class="team-grid"></div>
+        <section class="panel response-table-panel"><div class="panel-heading"><div><div class="section-kicker">ASSIGNED REQUESTS</div><h2>Team worklist</h2></div><button class="text-button" data-go="cases">Open case queue <span>↗</span></button></div><div id="team-worklist" class="team-worklist"></div></section>
+        <section class="response-principle"><span>◎</span><p><strong>People decide; TRACE assists.</strong> Every assignment and closure should be confirmed by an authorized response worker.</p></section>
+      </section>
+
+      <section class="view" id="view-route-map">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> END-TO-END WORKFLOW</div><h1>Project route map</h1><p class="page-subtitle">From a household report to a reviewed case and a verified follow-up.</p></div><span class="exercise-tag">PROPOSED FLOW</span></div>
+        <section class="panel route-panel"><div class="panel-heading"><div><div class="section-kicker">CASE JOURNEY</div><h2>How a report moves through TRACE</h2></div><span class="subtle-label">Human approval at every decision point</span></div>
+          <div class="route-steps">
+            <article class="route-step"><span class="route-num">01</span><span class="route-icon">⌂</span><h3>Household report</h3><p>A resident describes impact and immediate needs to a trained field worker.</p><span class="route-owner">RESIDENT + FIELD WORKER</span></article>
+            <span class="route-arrow">→</span>
+            <article class="route-step"><span class="route-num">02</span><span class="route-icon">▣</span><h3>Consent & intake</h3><p>Worker records minimum necessary details and confirms permission to share.</p><span class="route-owner">FIELD WORKER</span></article>
+            <span class="route-arrow">→</span>
+            <article class="route-step"><span class="route-num">03</span><span class="route-icon">⌁</span><h3>Save offline</h3><p>Case stays on the device until a connection is available.</p><span class="route-owner">TRACE APP</span></article>
+            <span class="route-arrow">→</span>
+            <article class="route-step"><span class="route-num">04</span><span class="route-icon">✦</span><h3>Structure draft</h3><p>AI helps organize the note into a case and suggested support needs.</p><span class="route-owner">AI ASSIST</span></article>
+          </div>
+          <div class="route-connector"><span>Connection returns → queued information can be processed</span></div>
+          <div class="route-steps second-row">
+            <article class="route-step"><span class="route-num">05</span><span class="route-icon">✓</span><h3>Human review</h3><p>Worker checks the details, corrects errors, and approves or asks for follow-up.</p><span class="route-owner">FIELD WORKER</span></article>
+            <span class="route-arrow">→</span>
+            <article class="route-step"><span class="route-num">06</span><span class="route-icon">⇢</span><h3>Route request</h3><p>Coordinator assigns an approved request to a responsible service or team.</p><span class="route-owner">COORDINATOR</span></article>
+            <span class="route-arrow">→</span>
+            <article class="route-step"><span class="route-num">07</span><span class="route-icon">♡</span><h3>Deliver support</h3><p>Response team records what was provided and what remains unresolved.</p><span class="route-owner">RESPONSE TEAM</span></article>
+            <span class="route-arrow">→</span>
+            <article class="route-step"><span class="route-num">08</span><span class="route-icon">↺</span><h3>Follow up & learn</h3><p>Team checks outcomes and reviews aggregated gaps to plan outreach.</p><span class="route-owner">TEAM + COORDINATOR</span></article>
+          </div>
+          <div class="route-guardrails"><div><span>◈</span><strong>Privacy</strong><small>Consent, minimal data, role-based access</small></div><div><span>⊙</span><strong>Safety</strong><small>Urgent danger uses official emergency channels</small></div><div><span>✓</span><strong>Accountability</strong><small>Human review before routing or closure</small></div></div>
+        </section>
+        <div class="route-bottom-grid"><section class="panel"><div class="section-kicker">PILOT ROADMAP</div><h2>Build toward field use</h2><div class="mini-roadmap"><div><b>1</b><span><strong>Prepare</strong><small>Agree data rules, teams, forms, and referrals.</small></span></div><div><b>2</b><span><strong>Dry run</strong><small>Exercise offline capture, review, and routing with synthetic cases.</small></span></div><div><b>3</b><span><strong>Small pilot</strong><small>Validate language, safety, accuracy, and case handling with partners.</small></span></div><div><b>4</b><span><strong>Evaluate & scale</strong><small>Expand only after privacy and response outcomes are reviewed.</small></span></div></div></section><section class="pilot-warning"><span class="warning-mark">!</span><div><strong>Prototype boundary</strong><p>This route map is a proposed design. The public TRACE prototype says it uses synthetic demo data and is not ready for real case records.</p><a href="https://tracecase.app/" target="_blank" rel="noreferrer">Read the current project status ↗</a></div></section></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="case-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="case-modal"><button id="close-modal" class="modal-close" aria-label="Close">×</button><div id="modal-content"></div></div></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
