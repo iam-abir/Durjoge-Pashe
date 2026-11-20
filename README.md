@@ -25,6 +25,10 @@ git remote add origin https://github.com/YOUR-ACCOUNT/YOUR-REPOSITORY.git
 git push -u origin main
 ```
 
+## Interface
+
+The interface uses a field-journal visual style with forest-green navigation, ivory surfaces, locally hosted DM Sans, an illustrated schematic map, and mobile bottom navigation. All five views support responsive layouts. Case records support keyboard activation and dialog focus management, and animations respect reduced-motion preferences. Typography licensing is included in `assets/dm-sans-LICENSE.txt`.
+
 ## Included
 
 - Overview with synthetic exercise cases, priority queue, support totals, and a schematic East Dhaka coverage map.
