@@ -1,3 +1,5 @@
+
+function visualIcon(value){const icons={'▤': '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>', '⌖': '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2"/></svg>', '◒': '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13h16a8 8 0 0 1-16 0ZM3 13h18M8 8V5m4 3V3m4 5V5"/></svg>', '⌂': '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8M6 9v12h12V9M10 21v-7h4v7"/></svg>', '＋': '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>', '◌': '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3S5 11 5 15a7 7 0 0 0 14 0c0-4-7-12-7-12Z"/></svg>'};return icons[value]||escapeHtml(value);}
 const STORAGE_KEY = 'trace_flood_response_demo_v1';
 const noticeKey = 'trace_demo_notice_dismissed_v1';
 const TEAM_LIST = [
@@ -22,6 +24,7 @@ let activeView = 'overview';
 let caseFilter = 'all';
 let lastDraft = null;
 let toastTimer;
+let modalTrigger;
 
 function loadCases(){
   try {
@@ -72,7 +75,7 @@ function renderOverview(){
     {label:'Support delivered',value:assisted,foot:'Confirmed in this exercise',icon:'✓',kind:'good'},
     {label:'Areas with open cases',value:new Set(openCases.map(c=>c.zone)).size,foot:'Of 4 exercise areas',icon:'⌖',kind:''}
   ];
-  document.getElementById('stats-grid').innerHTML = stats.map(s=>`<article class="stat-card ${s.kind}"><div class="stat-top"><span>${s.label}</span><span class="stat-icon">${s.icon}</span></div><div class="stat-value">${s.value}</div><div class="stat-foot">${s.foot}</div></article>`).join('');
+  document.getElementById('stats-grid').innerHTML = stats.map(s=>`<article class="stat-card ${s.kind}"><div class="stat-top"><span>${s.label}</span><span class="stat-icon">${visualIcon(s.icon)}</span></div><div class="stat-value">${s.value}</div><div class="stat-foot">${s.foot}</div></article>`).join('');
   const byZone = Object.fromEntries(['Khilgaon','Badda','Demra','Jatrabari'].map(z=>[z,cases.filter(c=>c.zone===z&&c.status!=='closed').length]));
   Object.entries(byZone).forEach(([zone,count])=>{
     const node=document.getElementById(`zone-count-${zone}`); if(node){node.textContent=count;node.classList.toggle('urgent',cases.some(c=>c.zone===zone&&c.priority==='urgent'&&c.status!=='closed'));}
@@ -81,7 +84,7 @@ function renderOverview(){
   const urgent = cases.filter(c=>c.status!=='closed'&&c.priority==='urgent').length;
   document.getElementById('priority-count').textContent = urgent;
   const priority = cases.filter(c=>c.status!=='closed').sort((a,b)=>priorityRank(a.priority)-priorityRank(b.priority)||a.createdAt-b.createdAt).slice(0,4);
-  document.getElementById('priority-list').innerHTML = priority.length ? priority.map(c=>`<article class="priority-item" data-open-case="${escapeHtml(c.id)}"><span class="priority-symbol">${NEED_ICONS[c.needs?.[0]]||'⌖'}</span><span class="priority-item-copy"><strong>${escapeHtml(c.id)} <span class="priority-tag ${priorityClass(c.priority)}">${escapeHtml(titleCase(c.priority))}</span></strong><small>${escapeHtml(c.zone)} · ${(c.needs||[]).slice(0,2).map(escapeHtml).join(', ')}</small></span><span class="chevron">›</span></article>`).join('') : '<div class="priority-empty">No open cases yet.</div>';
+  document.getElementById('priority-list').innerHTML = priority.length ? priority.map(c=>`<article class="priority-item" role="button" tabindex="0" aria-label="Open case ${escapeHtml(c.id)}" data-open-case="${escapeHtml(c.id)}"><span class="priority-symbol">${visualIcon(NEED_ICONS[c.needs?.[0]]||'⌖')}</span><span class="priority-item-copy"><strong>${escapeHtml(c.id)} <span class="priority-tag ${priorityClass(c.priority)}">${escapeHtml(titleCase(c.priority))}</span></strong><small>${escapeHtml(c.zone)} · ${(c.needs||[]).slice(0,2).map(escapeHtml).join(', ')}</small></span><span class="chevron">›</span></article>`).join('') : '<div class="priority-empty">No open cases yet.</div>';
   const totals = needsList().slice(0,4); const max = Math.max(1,...totals.map(x=>x[1]));
   document.getElementById('needs-bars').innerHTML = totals.length ? totals.map(([need,count])=>`<div class="need-bar-item"><div class="need-bar-label"><span>${escapeHtml(need)}</span><strong>${count}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(7,count/max*100)}%"></div></div></div>`).join('') : '<div class="subtle-label">No needs recorded.</div>';
   document.querySelectorAll('[data-open-case]').forEach(el=>el.addEventListener('click',()=>openCase(el.dataset.openCase)));
@@ -89,7 +92,7 @@ function renderOverview(){
 function priorityRank(value){return value==='urgent'?0:value==='high'?1:2;}
 function priorityClass(value){return `priority-${escapeHtml(value||'standard')}`;}
 function caseRow(c){
-  return `<article class="case-row" data-open-case="${escapeHtml(c.id)}">
+  return `<article class="case-row" role="button" tabindex="0" aria-label="Open case ${escapeHtml(c.id)}" data-open-case="${escapeHtml(c.id)}">
     <div class="case-id-wrap"><strong>${escapeHtml(c.id)}</strong><small>${formatTime(c.createdAt)}</small></div>
     <div class="case-area">${escapeHtml(c.zone)}<small>${escapeHtml(c.location)}</small></div>
     <div class="case-needs">${(c.needs||[]).slice(0,2).map(n=>`<span class="need-chip">${escapeHtml(n)}</span>`).join('')}</div>
@@ -117,7 +120,7 @@ function renderResponse(){
     const delivered=assigned.filter(c=>c.status==='delivered').length;
     const total=assigned.length;
     const percent=Math.min(100,total?Math.round(total/6*100):0);
-    return `<article class="team-card"><div class="team-card-top"><span class="team-icon">${icons[i]}</span><span class="team-capacity">${active} active</span></div><h3>${escapeHtml(t.name)}</h3><p>${escapeHtml(t.desc)}</p><div class="team-metric"><strong>${total}</strong><span>routed · ${delivered} delivered</span></div><div class="team-progress"><span style="width:${percent}%"></span></div></article>`;
+    return `<article class="team-card"><div class="team-card-top"><span class="team-icon">${visualIcon(icons[i])}</span><span class="team-capacity">${active} active</span></div><h3>${escapeHtml(t.name)}</h3><p>${escapeHtml(t.desc)}</p><div class="team-metric"><strong>${total}</strong><span>routed · ${delivered} delivered</span></div><div class="team-progress"><span style="width:${percent}%"></span></div></article>`;
   }).join('');
   const assigned=cases.filter(c=>c.team&&c.status!=='closed');
   const rows=assigned.map(c=>`<div class="work-row"><strong>${escapeHtml(c.id)}</strong><span>${escapeHtml(c.team)}</span><span>${escapeHtml(c.zone)}</span><span class="case-status status-${escapeHtml(c.status)}">${escapeHtml(STATUS_LABELS[c.status])}</span></div>`).join('');
@@ -128,7 +131,7 @@ function setView(view){
   if(!valid.includes(view)) return;
   activeView=view;
   document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.route===view));
+  document.querySelectorAll('.nav-item').forEach(el=>{el.classList.toggle('active',el.dataset.route===view); if(el.dataset.route===view)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
   const title={'overview':'Overview','intake':'New intake','cases':'Case queue','response':'Response teams','route-map':'Route map'}[view];
   document.getElementById('current-crumb').textContent=title;
   window.location.hash=view;
@@ -175,6 +178,7 @@ function saveIntake(event){
 }
 function openCase(id){
   const c=cases.find(item=>item.id===id);if(!c)return;
+  if(document.getElementById('case-modal').classList.contains('hidden')) modalTrigger=document.activeElement;
   const needs=(c.needs||[]).map(n=>`<span class="need-chip">${escapeHtml(n)}</span>`).join(' ');
   let actions='';
   if(c.status==='pending_review'){
@@ -188,6 +192,8 @@ function openCase(id){
   }
   document.getElementById('modal-content').innerHTML=`<div class="modal-eyebrow">CASE RECORD · ${escapeHtml(c.zone.toUpperCase())}</div><div class="modal-title-row"><div><h2 id="modal-title">${escapeHtml(c.id)}</h2><p>${escapeHtml(c.location)} · ${escapeHtml(c.household)}</p></div><span class="case-status status-${escapeHtml(c.status)}">${escapeHtml(STATUS_LABELS[c.status])}</span></div><div class="modal-grid"><div class="modal-field"><small>Suggested priority · human review</small><strong class="priority-label ${priorityClass(c.priority)}">${escapeHtml(titleCase(c.priority))}</strong></div><div class="modal-field"><small>Assigned team</small><strong>${escapeHtml(c.team||'Not assigned')}</strong></div><div class="modal-field"><small>Requested support</small><strong>${needs||'None listed'}</strong></div><div class="modal-field"><small>Household</small><strong>${escapeHtml(c.household)}</strong></div></div><div class="case-modal-note">${escapeHtml(c.note)}</div><div class="modal-actions">${actions}</div><p class="modal-history">${(c.history||[]).map(escapeHtml).join(' · ')}</p>`;
   document.getElementById('case-modal').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+  document.getElementById('close-modal').focus();
   document.querySelectorAll('[data-case-action]').forEach(btn=>btn.addEventListener('click',()=>updateCase(c.id,btn.dataset.caseAction)));
 }
 function updateCase(id,action){
@@ -205,7 +211,7 @@ function updateCase(id,action){
   }
   persist();render();openCase(id);showToast('Case updated.');
 }
-function dismissModal(){document.getElementById('case-modal').classList.add('hidden');}
+function dismissModal(){document.getElementById('case-modal').classList.add('hidden');document.body.style.overflow='';if(modalTrigger?.isConnected)modalTrigger.focus();}
 
 document.querySelectorAll('[data-route]').forEach(button=>button.addEventListener('click',()=>setView(button.dataset.route)));
 document.querySelectorAll('[data-go]').forEach(button=>button.addEventListener('click',()=>setView(button.dataset.go)));
@@ -232,3 +238,19 @@ const firstView=(window.location.hash||'').replace('#','');
 if(firstView) setView(firstView);
 try{if(sessionStorage.getItem(noticeKey)==='1')document.querySelector('.prototype-banner').remove();}catch{}
 render();
+
+// Keyboard access follows the same case actions as pointer input.
+document.addEventListener('keydown',event=>{
+  const trigger=event.target.closest('[data-open-case]');
+  if(trigger&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openCase(trigger.dataset.openCase);}
+  const modal=document.getElementById('case-modal');
+  if(event.key==='Tab'&&!modal.classList.contains('hidden')){
+    const controls=[...modal.querySelectorAll('button,select,[tabindex="0"]')].filter(el=>!el.disabled);
+    const first=controls[0],last=controls[controls.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  }
+});
+document.getElementById('workspace-info').addEventListener('click',()=>showToast('Exercise workspace · Synthetic cases, saved only in this browser.'));
+window.addEventListener('hashchange',()=>setView(location.hash.slice(1)||'overview'));
+document.querySelector('.nav-item.active')?.setAttribute('aria-current','page');

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620">
+<defs><pattern id="blocks" width="98" height="82" patternTransform="rotate(-17)" patternUnits="userSpaceOnUse"><rect width="98" height="82" fill="#e9ede1"/><path d="M0 0H98V82H0Z" fill="none" stroke="#fffdf4" stroke-width="9"/><path d="M47 0V82M0 40H98" fill="none" stroke="#f8f8ed" stroke-width="4"/><path d="M8 8h30v24H8zm48 0h31v24H56zM8 49h30v24H8zm48 0h31v24H56z" fill="#dce3d3" opacity=".6"/></pattern></defs>
+<path fill="url(#blocks)" d="M0 0h1000v620H0z"/>
+<g fill="#ccdabc" opacity=".8"><path d="M25 80l155-48 30 76-132 53z"/><path d="M750 346l115-40 38 96-123 45z"/><path d="M70 479l124-35 34 100-133 28z"/><path d="M510 30l99-25 29 77-98 30z"/></g>
+<path d="M734-30c-150 109-9 173-130 255S444 278 431 371s80 143-4 275" fill="none" stroke="#bad5cd" stroke-width="77"/>
+<path d="M734-30c-150 109-9 173-130 255S444 278 431 371s80 143-4 275" fill="none" stroke="#cce0d7" stroke-width="59"/>
+<path d="M1030 229c-158 32-198-2-247 37S633 355 476 350" fill="none" stroke="#c4dcd3" stroke-width="28"/>
+<g fill="none" stroke-linecap="round"><path d="M-20 348L1020 70M99-20l252 660M-20 532l1040-292M779-20L620 640" stroke="#cdd1bb" stroke-width="17"/><path d="M-20 348L1020 70M99-20l252 660M-20 532l1040-292M779-20L620 640" stroke="#fffbed" stroke-width="12"/><path d="M-20 348L1020 70M99-20l252 660M-20 532l1040-292M779-20L620 640" stroke="#e0cfa4" stroke-width="1.5"/></g>
+<g font-family="sans-serif" font-size="12" fill="#89947e" letter-spacing="3"><text x="55" y="255" transform="rotate(-16 55 255)">COMMUNITY ROAD</text><text x="711" y="544" transform="rotate(-16 711 544)">EAST DHAKA</text></g>
+<g fill="none" stroke="#a1b399" stroke-dasharray="5 7" opacity=".65"><path d="M0 200Q210 130 410 180T1000 100M100 620Q190 400 330 290T400 0"/></g>
+</svg>
